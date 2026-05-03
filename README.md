@@ -1,66 +1,73 @@
-# Kokuyō (黒曜) - Personal Media Tracker
+# 🌌 Kokuyō (黒曜) — Personal Media Tracker
 
-Kokuyō is a production-ready, comprehensive personal media tracking application designed to help users organize, track, and manage their consumption of various media types including Anime, Manga, Movies, TV Series, and Books.
+Kokuyō is a sophisticated, all-in-one media tracking platform designed for enthusiasts to curate and monitor their consumption of Anime, Manga, Movies, TV Series, and Books. Built with a focus on aesthetics and security, it provides a seamless experience for organizing personal collections and connecting with friends.
 
-Built with a modern tech stack and focusing on security and performance, Kokuyō provides a centralized hub for your digital library, ensuring you never lose track of your progress again.
+---
 
 ## 🚀 Project Overview
 
-Kokuyō (meaning "Obsidian" in Japanese) is a unified platform for media enthusiasts. It solves the fragmentation problem of using multiple different apps to track different types of media.
+**Kokuyō** (Japanese for *Obsidian*) is a centralized hub for tracking your digital life. Whether you're an avid reader, a cinephile, or an otaku, Kokuyō solves the problem of fragmented tracking across multiple platforms by bringing everything into one sleek, unified interface.
 
 ### Target Users
-- **Media Enthusiasts**: People who consume large amounts of varied media and need a structured way to track progress.
-- **Collectors**: Users who want to maintain a digital catalog of their finished and planned media.
-- **Privacy-Conscious Users**: Individuals who prefer a personal, secure tracking system over large public social networks.
+- **Media Enthusiasts**: Users who want to track their progress, scores, and reviews for various media types.
+- **Social Trackers**: Users who want to share their collections and see what their friends are watching or reading.
+- **Data-Driven Organizers**: Users who appreciate detailed statistics and metadata for their personal library.
 
 ---
 
 ## ✨ Core Features
 
-### 📺 Media Tracking
-- **Anime & Manga**: Search and track your progress through the MyAnimeList database (via Jikan API).
-- **Movies & Series**: Comprehensive data for films and television shows (via TMDB API).
-- **Books**: Track your reading list using the Google Books database.
-- **Progress Management**: Update current episodes, chapters, or pages with one click.
-- **Status Organization**: Categorize items as *Watching/Reading*, *Completed*, *On Hold*, *Dropped*, or *Plan to Watch/Read*.
+### 🎞️ Media Management
+- **Universal Tracking**: Manage Anime, Manga, Movies, TV Series, and Books.
+- **Progress Monitoring**: Update episodes watched, chapters read, or pages finished.
+- **Status Categories**: Organize items into *Watching/Reading*, *Completed*, *Plan to Watch/Read*, *On Hold*, and *Dropped*.
+- **Detailed Metadata**: Add personal scores, tags, reviews, and custom cover images.
 
-### 📂 Collection Management
-- **Custom Collections**: Group your media into logical collections.
-- **Smart Filtering**: Filter your library by status, genre, or specific collections.
-- **Uncategorized View**: Easily identify items that haven't been assigned to a collection yet.
+### 🔍 Discovery & Integration
+- **Smart Search**: Integrated with third-party APIs for instant metadata fetching:
+  - **Jikan API**: For Anime and Manga.
+  - **TMDB API**: For Movies and TV Series.
+  - **Google Books API**: For Books.
+- **Auto-Fill**: Automatically fetch titles, synopses, and default covers.
 
-### 🔐 Security & Auth
-- **Session-Based Authentication**: Secure login system using opaque session tokens stored in MongoDB.
-- **CSRF Protection**: Robust protection against Cross-Site Request Forgery using the `double-csrf` pattern.
-- **Secure Cookies**: HTTP-only, Secure, and Partitioned (CHIPS) cookies for session management.
-- **Owner-Only Access**: Strict server-side checks to ensure users can only modify their own media entries.
+### 👥 Social & Friends System
+- **Friend Requests**: Send and receive friend requests to build your network.
+- **Member Directory**: Discover other users on the platform.
+- **Profile Cards**: Quick view of user stats and collection highlights.
+- **Shared Collections**: Quick access to friend's media libraries.
 
-### 🖼️ Image Management
-- **ImageKit Integration**: Automatic uploading and optimization of media covers to ImageKit for lightning-fast delivery.
-- **Local Fallbacks**: Intelligent handling of missing covers with placeholder support.
+### 🛡️ Security & Performance
+- **Secure Authentication**: OTP-based registration and login system for enhanced security.
+- **State Management**: Fluid UI transitions and efficient data handling using Zustand.
+- **Rate Limiting**: Protection against brute-force and spam on sensitive endpoints.
+- **CSRF Protection**: Robust defense against cross-site request forgery.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 19**: Modern UI library with the latest features.
-- **Tailwind CSS 4**: Next-generation utility-first CSS framework for high-performance styling.
-- **Zustand**: Lightweight and fast state management.
-- **React Router 7**: Sophisticated client-side routing.
-- **Lucide React**: Clean and consistent iconography.
-- **Axios**: Promise-based HTTP client with interceptors for CSRF and Auth.
+- **Framework**: React 19 (Vite)
+- **Styling**: Tailwind CSS 4
+- **Icons**: Lucide React
+- **State Management**: Zustand
+- **HTTP Client**: Axios
 
 ### Backend
-- **Node.js & Express 5**: Fast and minimalist web framework.
-- **MongoDB & Mongoose**: Flexible NoSQL database and object modeling.
-- **Pino**: High-performance structured logging.
+- **Runtime**: Node.js
+- **Framework**: Express 5
+- **Database**: MongoDB (via Mongoose)
+- **Logging**: Pino & Pino-pretty
+- **Security**: 
+  - JWT (JSON Web Tokens) with HttpOnly cookies
+  - `csrf-csrf` for CSRF protection
+  - `helmet` for HTTP header security
+  - `express-rate-limit` for DDoS/Brute-force protection
+  - `bcryptjs` for password hashing
 
-### Security & Utilities
-- **double-csrf**: Stateless CSRF protection.
-- **Helmet**: Essential security headers for Express.
-- **BcryptJS**: Secure password hashing.
-- **ImageKit SDK**: Server-side image processing and hosting.
+### Third-Party Services
+- **ImageKit**: Cloud storage for media covers and user images.
+- **Nodemailer**: Email delivery for OTP and notifications.
 
 ---
 
@@ -68,40 +75,41 @@ Kokuyō (meaning "Obsidian" in Japanese) is a unified platform for media enthusi
 
 Kokuyō follows a decoupled Client-Server architecture:
 
-1.  **Authentication Flow**:
-    - User logs in; server generates a cryptographically secure session token.
-    - Token is stored in the Database and sent to the client via an `httpOnly` cookie.
-    - Subsequent requests are validated against the database session.
-2.  **Request-Response Lifecycle**:
-    - **Client**: Initiates request with CSRF token in headers and session cookie.
-    - **Middleware**: Helmet headers applied -> CORS check -> CSRF validation -> Auth check (Session verification).
-    - **Controller**: Business logic execution and Third-party API interaction (TMDB, Jikan, etc.).
-    - **Database**: Mongoose interacts with MongoDB for persistent storage.
-    - **Response**: Standardized JSON response returned to the frontend.
+1.  **Frontend (React)**: A modern SPA (Single Page Application) that communicates with the backend via a RESTful API. It uses **Zustand** for lightweight global state and **React Router** for navigation.
+2.  **Backend (Express)**: A robust REST API that handles business logic, authentication, and database interactions.
+3.  **Authentication Flow**:
+    - User registers/logs in via email.
+    - System sends a 6-digit OTP via email.
+    - Upon verification, a JWT is issued and stored in an **HttpOnly cookie**.
+    - All subsequent requests include the JWT and a **CSRF token** for validation.
+4.  **Request-Response Lifecycle**:
+    - Requests pass through global middleware (Helmet, CORS, Rate Limiter).
+    - Authentication middleware validates the JWT.
+    - Route handlers interact with Mongoose models.
+    - Responses are returned in a standardized JSON format.
 
 ---
 
 ## 📂 Folder Structure
 
 ```text
-Kokuyo/
-├── backend/                # Express Server
-│   ├── middleware/         # Auth & Security middlewares
-│   ├── models/             # Mongoose Schemas (User, Anime, etc.)
-│   ├── routes/             # API Endpoints
-│   ├── utils/              # Helper functions (Fetch, Logging)
-│   ├── server.js           # Entry point
-│   └── .env                # Server environment variables
-├── frontend/               # Vite + React App
-│   ├── public/             # Static assets
+Kokuyō/
+├── frontend/                # React application
+│   ├── public/              # Static assets
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── pages/          # Full page views
-│   │   ├── store/          # Zustand state stores
-│   │   ├── utils/          # API client and formatters
-│   │   └── App.jsx         # Main application component
-│   └── .env                # Frontend environment variables
+│   │   ├── components/      # Reusable UI components
+│   │   ├── pages/           # Page-level components
+│   │   ├── store/           # Zustand state definitions
+│   │   ├── utils/           # Helper functions & API config
+│   │   └── App.jsx          # Root component & Routing
+│   └── vite.config.js
+├── backend/                 # Node.js Express API
+│   ├── middleware/          # Auth, Rate limiting, CSRF
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # API endpoints
+│   ├── utils/               # Email templates & Helpers
+│   ├── server.js            # Entry point
+│   └── .env.example         # Environment template
 └── README.md
 ```
 
@@ -109,117 +117,103 @@ Kokuyo/
 
 ## 🔑 Environment Variables
 
-### Backend (`backend/.env`)
+### Backend (`/backend/.env`)
 | Variable | Description |
 | :--- | :--- |
 | `PORT` | Server port (default: 5000) |
 | `MONGO_URI` | MongoDB connection string |
 | `CSRF_SECRET` | Secret key for CSRF token generation |
 | `IMAGEKIT_PUBLIC_KEY` | Public key from ImageKit dashboard |
-| `IMAGEKIT_PRIVATE_KEY` | Private key from ImageKit dashboard |
+| `IMAGEKIT_PRIVATE_KEY` | Private key for server-side auth |
 | `IMAGEKIT_URL_ENDPOINT` | Your ImageKit URL endpoint |
-| `TMDB_API_KEY` | API Key for The Movie Database |
-| `GOOGLE_BOOKS_API_KEY` | API Key for Google Books API |
+| `TMDB_API_KEY` | API key for Movie/Series search |
+| `GOOGLE_BOOKS_API_KEY` | API key for Book search |
 
-### Frontend (`frontend/.env`)
+### Frontend (`/frontend/.env`)
 | Variable | Description |
 | :--- | :--- |
-| `VITE_API_URL` | Full URL to the backend API (e.g., http://localhost:5000/api) |
+| `VITE_API_URL` | Backend API base URL (e.g., `http://localhost:5000/api`) |
 
 ---
 
-## 🛠️ Installation & Setup
+## ⚙️ Installation & Setup
 
 ### 1. Prerequisites
 - Node.js (v18+)
-- MongoDB (Atlas or Local)
-- API Keys for: [ImageKit](https://imagekit.io/), [TMDB](https://www.themoviedb.org/), [Google Cloud](https://console.cloud.google.com/)
+- MongoDB (Local or Atlas)
+- ImageKit Account
 
-### 2. Quick Start (Root)
-The project includes root-level scripts to manage both frontend and backend:
-
-```bash
-# Install all dependencies (Frontend & Backend)
-npm run install-all
-
-# Run both in development mode concurrently
-npm run dev
-```
-
-### 3. Manual Setup
-
-#### Backend Setup
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Fill in your .env variables
+# Fill in your environment variables in .env
 npm run dev
 ```
 
-#### Frontend Setup
+### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
 cp .env.example .env
-# Fill in your VITE_API_URL
+# Ensure VITE_API_URL points to your backend
 npm run dev
 ```
-
-The application will be available at `http://localhost:5173`.
-
 
 ---
 
 ## 🛡️ Security Implementation
 
-- **CSRF Protection**: Every state-changing request (POST, PUT, DELETE) requires a valid `x-csrf-token` header, matched against an encrypted cookie.
-- **Ownership Verification**: All media operations (`update`, `delete`) verify that the `resource.userId === authenticatedUser.id`.
-- **Session Security**: Sessions are invalidated on logout and have a server-side TTL. Cookies are configured with `SameSite=None` (for cross-origin production) or `Strict` (local).
-- **Rate Limiting**: Integrated retry logic for third-party APIs (Jikan) to handle external rate limits gracefully.
+- **Role-Based Access**: Users can only modify their own media collections.
+- **Ownership Validation**: Backend middleware ensures that `user_id` in requests matches the authenticated user.
+- **CSRF Protection**: Every state-changing request (POST, PUT, DELETE) requires a valid X-CSRF-Token.
+- **Rate Limiting**: 
+  - `auth`: Strict limits on login/OTP attempts (e.g., 5 attempts per hour for OTP).
+  - `api`: General limits to prevent abuse.
 
 ---
 
-## 📡 API Documentation (Major Routes)
+## 📡 API Documentation (Overview)
 
-| Method | Route | Purpose |
+| Method | Endpoint | Purpose |
 | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | User registration |
-| `POST` | `/api/auth/login` | User login |
-| `GET` | `/api/csrf-token` | Fetch a new CSRF token |
-| `GET` | `/api/anime/search` | Search anime (Jikan API) |
-| `POST` | `/api/anime/add` | Add anime to personal list |
-| `PATCH` | `/api/:media/:id/progress` | Update media progress |
-| `DELETE` | `/api/:media/:id` | Remove media from list |
+| `POST` | `/api/auth/register` | Register a new user |
+| `POST` | `/api/auth/verify-otp` | Verify OTP and login |
+| `GET` | `/api/user/profile` | Get current user data |
+| `GET` | `/api/anime` | Fetch user's anime collection |
+| `POST` | `/api/anime/add` | Add new anime to tracker |
+| `GET` | `/api/friends/list` | View friends list |
+| `POST` | `/api/friends/request` | Send a friend request |
 
 ---
 
 ## 🚀 Deployment
 
-### Backend (Render/Heroku/Vercel)
-1. Set `NODE_ENV=production`.
-2. Ensure `FRONTEND_URL` is set to your deployed frontend domain.
-3. The server is configured to serve the `frontend/dist` folder automatically if `NODE_ENV` is production.
+### Backend
+1. Use **Render**, **Railway**, or **Heroku**.
+2. Set environment variables in the platform's dashboard.
+3. Ensure `NODE_ENV` is set to `production`.
 
 ### Frontend
-1. Run `npm run build` in the frontend directory.
-2. The resulting `dist` folder should be accessible to the backend server.
+1. Build the project: `npm run build`.
+2. Deploy the `dist` folder to **Vercel**, **Netlify**, or serve via the backend.
 
 ---
 
 ## 🔮 Future Improvements
-- **Social Features**: Allow users to share their public collections.
-- **Recommendations**: AI-powered suggestions based on current watch list.
-- **Notifications**: Reminders for new episode releases.
-- **Mobile App**: PWA or React Native companion app.
+- **Bulk Import**: Import data from MyAnimeList or Goodreads.
+- **Global Search**: Search across all media types simultaneously.
+- **Activity Feed**: Real-time updates from friends.
+- **Statistics Dashboard**: Visual charts for media consumption habits.
 
 ---
 
 ## 🤝 Contributing
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
+1. Fork the repository.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
 
 ---

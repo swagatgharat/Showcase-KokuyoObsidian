@@ -9,8 +9,8 @@ Kokuyō is a sophisticated, all-in-one media tracking platform designed for enth
 **Kokuyō** (Japanese for *Obsidian*) is a centralized hub for tracking your digital life. Whether you're an avid reader, a cinephile, or an otaku, Kokuyō solves the problem of fragmented tracking across multiple platforms by bringing everything into one sleek, unified interface.
 
 ### Target Users
-- **Media Enthusiasts**: Users who want to track their progress, scores, and reviews for various media types.
-- **Social Trackers**: Users who want to share their collections and see what their friends are watching or reading.
+- **Media Enthusiasts**: Users who want to track their progress, scores, and reviews for various media types including Games.
+- **Social Trackers**: Users who want to share their collections and see what their friends are watching, reading, or playing.
 - **Data-Driven Organizers**: Users who appreciate detailed statistics and metadata for their personal library.
 
 ---
@@ -18,7 +18,7 @@ Kokuyō is a sophisticated, all-in-one media tracking platform designed for enth
 ## ✨ Core Features
 
 ### 🎞️ Media Management
-- **Universal Tracking**: Manage Anime, Manga, Movies, TV Series, and Books.
+- **Universal Tracking**: Manage Anime, Manga, Movies, TV Series, Books, and Games.
 - **Progress Monitoring**: Update episodes watched, chapters read, or pages finished.
 - **Status Categories**: Organize items into *Watching/Reading*, *Completed*, *Plan to Watch/Read*, *On Hold*, and *Dropped*.
 - **Detailed Metadata**: Add personal scores, tags, reviews, and custom cover images.
@@ -28,19 +28,24 @@ Kokuyō is a sophisticated, all-in-one media tracking platform designed for enth
   - **Jikan API**: For Anime and Manga.
   - **TMDB API**: For Movies and TV Series.
   - **Google Books API**: For Books.
+  - **IGDB API**: For Video Games.
 - **Auto-Fill**: Automatically fetch titles, synopses, and default covers.
 
 ### 👥 Social & Friends System
 - **Friend Requests**: Send and receive friend requests to build your network.
 - **Member Directory**: Discover other users on the platform.
 - **Profile Cards**: Quick view of user stats and collection highlights.
+- **Native Sharing**: Share your user ID via a friendly invite message using the native Web Share API (WhatsApp, Instagram, etc.).
 - **Shared Collections**: Quick access to friend's media libraries.
 
 ### 🛡️ Security & Performance
-- **Secure Authentication**: OTP-based registration and login system for enhanced security.
+- **Secure Authentication**: OTP-based registration and multi-session login system (up to 5 concurrent devices).
+- **Session Management**: View detailed list of active sessions (browser, OS, device type, client IP, and last active time) with current device labeling and remote logout.
+- **Token Rotation**: Enhanced security using automatic Refresh Token rotation.
+- **Skeleton Loading**: Premium UX with high-end shimmering skeleton states for all major content areas.
 - **State Management**: Fluid UI transitions and efficient data handling using Zustand.
 - **Rate Limiting**: Protection against brute-force and spam on sensitive endpoints.
-- **CSRF Protection**: Robust defense against cross-site request forgery.
+- **Rate Limiting**: Protection against brute-force and spam on sensitive endpoints.
 
 ---
 
@@ -60,7 +65,6 @@ Kokuyō is a sophisticated, all-in-one media tracking platform designed for enth
 - **Logging**: Pino & Pino-pretty
 - **Security**: 
   - JWT (JSON Web Tokens) with HttpOnly cookies
-  - `csrf-csrf` for CSRF protection
   - `helmet` for HTTP header security
   - `express-rate-limit` for DDoS/Brute-force protection
   - `bcryptjs` for password hashing
@@ -80,8 +84,8 @@ Kokuyō follows a decoupled Client-Server architecture:
 3.  **Authentication Flow**:
     - User registers/logs in via email.
     - System sends a 6-digit OTP via email.
-    - Upon verification, a JWT is issued and stored in an **HttpOnly cookie**.
-    - All subsequent requests include the JWT and a **CSRF token** for validation.
+    - Upon verification, an access token and refresh token are issued and stored.
+    - **Multi-Session Support**: Supports up to 5 active refresh tokens with automatic rotation. The system tracks session metadata (browser, OS, device, IP, and last active timestamp) to allow precise user control.
 4.  **Request-Response Lifecycle**:
     - Requests pass through global middleware (Helmet, CORS, Rate Limiter).
     - Authentication middleware validates the JWT.
@@ -122,12 +126,13 @@ Kokuyō/
 | :--- | :--- |
 | `PORT` | Server port (default: 5000) |
 | `MONGO_URI` | MongoDB connection string |
-| `CSRF_SECRET` | Secret key for CSRF token generation |
 | `IMAGEKIT_PUBLIC_KEY` | Public key from ImageKit dashboard |
 | `IMAGEKIT_PRIVATE_KEY` | Private key for server-side auth |
 | `IMAGEKIT_URL_ENDPOINT` | Your ImageKit URL endpoint |
 | `TMDB_API_KEY` | API key for Movie/Series search |
 | `GOOGLE_BOOKS_API_KEY` | API key for Book search |
+| `IGDB_CLIENT_ID` | Twitch Client ID for Game search |
+| `IGDB_CLIENT_SECRET` | Twitch Client Secret for Game search |
 
 ### Frontend (`/frontend/.env`)
 | Variable | Description |
@@ -167,7 +172,7 @@ npm run dev
 
 - **Role-Based Access**: Users can only modify their own media collections.
 - **Ownership Validation**: Backend middleware ensures that `user_id` in requests matches the authenticated user.
-- **CSRF Protection**: Every state-changing request (POST, PUT, DELETE) requires a valid X-CSRF-Token.
+- **Ownership Validation**: Backend middleware ensures that `user_id` in requests matches the authenticated user.
 - **Rate Limiting**: 
   - `auth`: Strict limits on login/OTP attempts (e.g., 5 attempts per hour for OTP).
   - `api`: General limits to prevent abuse.
@@ -182,9 +187,12 @@ npm run dev
 | `POST` | `/api/auth/verify-otp` | Verify OTP and login |
 | `GET` | `/api/user/profile` | Get current user data |
 | `GET` | `/api/anime` | Fetch user's anime collection |
+| `GET` | `/api/games` | Fetch user's games collection |
 | `POST` | `/api/anime/add` | Add new anime to tracker |
 | `GET` | `/api/friends/list` | View friends list |
-| `POST` | `/api/friends/request` | Send a friend request |
+| `POST` | `/api/auth/request` | Send a friend request |
+| `GET` | `/api/auth/sessions` | Get active sessions details & count |
+| `POST` | `/api/auth/sessions/clear-others` | Logout all other devices |
 
 ---
 

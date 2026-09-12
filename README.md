@@ -1,22 +1,24 @@
-# 🌌 Kokuyō (黒曜) — Personal Media Tracker
+# Kokuyo Obsidian (黒曜) - Personal Media Tracker
 
-Kokuyō (黒曜) is an elegant, unified media tracking platform designed to curate and monitor Anime, Manga, Movies, TV Series, Books, and Games. It combines personal collection logging, third-party metadata sync, custom playlists, secure session handling, and interactive friend networks into a single, cohesive interface.
+Kokuyo Obsidian (黒曜) is an elegant, unified media tracking platform designed to curate and monitor Anime, Manga, Movies, TV Series, Books, and Games. It combines personal collection logging, third-party metadata sync, custom playlists, linked progress steppers, secure session handling, dynamic billing cycles, and interactive friend networks into a single, cohesive interface.
 
 ## Links
 
-- **Live Demo**: [https://kokuyo.onrender.com](https://kokuyo.onrender.com)
+- **Live Demo**: [https://kokuyoobsidian.onrender.com](https://kokuyoobsidian.onrender.com/)
 
 ## Image
 
-<img width="3150" height="2205" alt="Kokuyo" src="https://github.com/user-attachments/assets/95891b59-15a4-41c5-8e9e-6638d1975f8f" />
+<img width="3150" height="2205" alt="Kokuyo Obsidian" src="https://github.com/user-attachments/assets/95891b59-15a4-41c5-8e9e-6638d1975f8f" />
+
+---
 
 ## 1. Project Overview
 
-**Kokuyō** (Japanese for *Obsidian*) is a centralized hub for tracking your digital life. Whether you're an avid reader, a cinephile, a gamer, or an otaku, Kokuyō brings fragmented tracking into one sleek interface.
+**Kokuyo Obsidian** (Japanese for *Obsidian*) is a centralized hub for tracking your digital life. Whether you're an avid reader, a cinephile, a gamer, or an otaku, Kokuyo Obsidian brings fragmented tracking into one sleek interface.
 
 ### Problem Solved
 
-Traditional media tracking is highly fragmented—users need MAL for anime/manga, Letterboxd or TMDB for movies/TV, Goodreads for books, and Backloggd for games. Kokuyō solves this by offering an all-in-one platform to track progress, scores, reviews, and custom collections across all six media types in a single database and dashboard, with local cataloging and third-party API resolution.
+Traditional media tracking is highly fragmented—users need MAL for anime/manga, Letterboxd or TMDB for movies/TV, Goodreads for books, and Backloggd for games. Kokuyo Obsidian solves this by offering an all-in-one platform to track progress, scores, reviews, and custom collections across all six media types in a single database and dashboard, with local cataloging and third-party API resolution.
 
 ### Target Users
 
@@ -28,21 +30,34 @@ Traditional media tracking is highly fragmented—users need MAL for anime/manga
 
 ## 2. Core Features
 
-- **Universal Tracking**: Manage Anime, Manga, Movies, Web Series, Books, and Games with progress tracking (episodes, chapters, pages, playtime), status categories (*Watching/Reading/Playing* and *Completed*), and custom playlists (`userCollection`).
+- **Universal Tracking & Linked Progress Steppers**: Manage Anime, Manga, Movies, TV Series, Books, and Games with progress tracking. Features **Bi-directional Linked Progress Steppers** for TV Series (*Season <-> Episode*) and Manga (*Volume <-> Chapter*) that auto-sync progress and status (*Watching/Reading/Playing* vs. *Completed*).
+- **Watch/Read Search Shortcuts**: Premium hover overlays on collection cards (Play, Book, or Gamepad icon) that route directly to configured official streaming, reading, or search options. If no platform is matched or configured, searches fallback to Google.
+- **Dynamic Cover Refetch & Missing Filter**: Keep your library visually pristine. Sync buttons on missing or placeholder card covers trigger background metadata resolution to fetch fresh covers. A dynamic "Missing" filter pill is automatically added to collections to isolate items requiring cover corrections.
 - **Excel Archive (Export & Import)**: Bulk-add titles or update progress via multi-sheet `.xlsx` workbooks. Re-import sheets for round-trip synchronization with smart resolution matching.
 - **Discovery & Integration**: Per-type tabbed discovery powered by third-party APIs (Jikan for Anime/Manga, TMDB for Movies/TV, Google Books/Open Library for Books, IGDB for Games) and fuzzy matching (`fuzzySearch.js`) for Discover result ranking.
-- **Social & Friends System**: Connect via shareable `shortId` invites. View friend libraries and copy media with one-click **Add to Kokuyō** copying catalog metadata.
+- **Social & Friends System**: Connect via shareable `platformId` invites. View friend libraries and copy media with one-click **Add to Kokuyo Obsidian** copying catalog metadata.
 - **Profile & Account**: View collection stats, manage sessions (concurrent devices), change/recover passwords via email OTP, and export/import data.
+- **Session Management & Automatic Revocation**: Security dashboard under the user profile that displays all concurrent active sessions (browser, OS, device, IP, last active time, current session marker) with manual logout options. **Automatic Session Revocation** immediately invalidates all other active sessions when an account password is updated or reset via OTP.
+- **Keep-Alive & OAuth Maintenance Cron**: Built-in background interval processes that ping the server to prevent cold starts on free hosting tiers, log server health to an optional dedicated database, and run a 90-day Gmail OAuth2 keep-alive check to prevent credentials from expiring.
+- **Multi-Tier Subscription System**: Integrated Dodo Payments gateway supporting four levels: Rookie (Free), Enthusiast, Nerd, and Otaku plans. Supports flexible billing cycles (**Monthly**, **Quarterly**, **Half-Yearly**, **Yearly**) with auto-calculated or admin-configured discount badges, as well as a ₹10 free trial (expires in 7 days). Each tier enforces unique limits for catalog items, friend connections, and concurrent active sessions, along with access to premium features (Excel backups, mutual collection views).
+- **Admin Control Panel**: Comprehensive administrative dashboard featuring analytic stats (user growth, revenue metrics, plan distributions, database stats), paginated user list with full profile inspection, manual subscription overrides (plan, billing cycle, and custom expiry adjustments), support for resetting trial eligibility, transactional payment history logs, direct pricing/limits configuration changes with automatic in-memory cache invalidation, catalog item editing, and dynamic redirection platform management.
+- **Community Reviews & Recommendations**: Public reviews feed allowing users to rate and write reviews on catalog items, along with a recommendation feed (exclusive to premium tiers) allowing users to recommend catalog media directly from their tracking lists to the community.
+- **Legal Consent & Version Control**: Integrated Terms of Service and Privacy Policy consent system. Warns users when policies are updated using a legal update notifier, requiring acceptance of the new versions. Features an in-place markdown editor for administrators to deploy and activate legal document versions directly from the UI.
+- **User Banning & Security Controls**: Admin operations allowing temporary or permanent account bans with customization for ban duration, reasons, and appeal deadlines. Automatically logs out banned sessions and notifies users via custom formatted HTML emails.
+- **Puppeteer Secure Receipt Service**: Automates custom-branded invoice/receipt generation and delivery via PDF attachment in emails. Includes automated attachment generation for manual UPI transfers (purged from cloud storage after 7 days for user financial privacy).
+- **Dual-Mode Background Queues (BullMQ)**: Managed background jobs for cover refetching and streaming/reading availability resolution via BullMQ/Redis with automated, memory-bounded fallback queues when Redis is offline.
 
 ---
 
 ## 3. Tech Stack
 
-- **Frontend**: [React 19](https://react.dev/) / [React Router 7](https://reactrouter.com/)
-- **Runtime / Framework**: [Node.js](https://nodejs.org/) / [Express.js 5](https://expressjs.com/)
-- **Database**: [MongoDB](https://www.mongodb.com/) via [Mongoose](https://mongoosejs.com/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **State Management**: [Zustand](https://zustand-demo.pmnd.rs/)
+- **Frontend**: [React 19](https://react.dev/) / [React Router 7](https://reactrouter.com/) / [Zustand 5](https://github.com/pmndrs/zustand)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) / [Lucide React](https://lucide.dev/)
+- **Backend / Runtime**: [Node.js](https://nodejs.org/) / [Express.js 5](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/) via [Mongoose 9](https://mongoosejs.com/)
+- **DevOps & Infrastructure**: [Docker](https://www.docker.com/) / [Docker Compose](https://docs.docker.com/compose/) / [Nginx (Alpine)](https://nginx.org/)
+- **Payments / Integrations**: [Dodo Payments API](https://dodopayments.com/) / [Google APIs (Gmail OAuth2)](https://developers.google.com/gmail/api) / [ImageKit SDK](https://imagekit.io/)
+- **Utilities**: [XLSX (SheetJS)](https://sheetjs.com/) (Excel import/export) / [Pino](https://github.com/pinojs/pino) (Structured logging) / [ua-parser-js](https://github.com/faisalman/ua-parser-js) (Session metadata) / [Helmet](https://helmetjs.github.io/) (Security headers) / [BullMQ](https://github.com/taskforcesh/bullmq) (Background Jobs) / [Redis](https://redis.io/) (Caching/Job Queue) / [Puppeteer](https://pptr.dev/) (PDF generation) / [Sharp](https://github.com/lovell/sharp) (Image optimization)
 
 ---
 
@@ -61,46 +76,71 @@ The frontend is a React Single Page Application (SPA) built using Vite:
 
 The backend implements a modular MVC-like API architecture:
 - **Routes**: Defines endpoints and attaches validation and authentication middleware (`backend/routes`).
-- **Middleware**: Custom handlers for token validation, rate-limiting, error handling, and file processing (`backend/middleware`).
-- **Models**: Mongoose schemas representing Users, Catalogs, User-Entries, and Friendships (`backend/models`).
-- **Services/Utils**: Core logic for email delivery via Gmail API, Excel importing/resolution, external API queries, and cron-scheduled tasks (`backend/utils`).
+- **Middleware**: Custom handlers for token validation, rate-limiting, subscription checks, admin checks, error handling, and file processing (`backend/middleware`).
+- **Models**: Mongoose schemas representing Users, Subscriptions, PaymentRecords, TierConfigs, Catalogs, User-Entries, and Friendships (`backend/models`).
+- **Services/Utils**: Core logic for email delivery via Gmail API, Excel importing/resolution, external API queries, database seeding, tier caching, and cron-scheduled tasks (`backend/utils`).
 
-### Authentication Flow
+### Authentication & Session Security Flow
 
 1. User registers or logs in with email and password → receives an `accessToken` and a `refreshToken` (HttpOnly, SameSite cookie).
 2. Access tokens are held in-memory/app-state; refresh tokens are used to request new access tokens on rotation `/api/auth/refresh`.
-3. The server supports up to 5 concurrent sessions per user. Each session stores metadata including browser, OS, device, IP, and last active time.
-4. OTP verification (via Gmail API OAuth2) is required for password recovery and password change flows.
+3. The server enforces a dynamic session cap based on the subscription tier (Rookie/Trial: 2, Enthusiast: 3, Nerd: 5, Otaku: 10 concurrent active sessions). Each session stores metadata including browser, OS, device, IP, and last active time.
+4. **Automatic Session Revocation**: Updating or resetting an account password automatically wipes all other active refresh tokens from the database, immediately terminating unauthorized device sessions.
 
-### Catalog Pipeline
+### Subscription Limits & Locking Pipeline
 
-1. Discover/search actions fetch real-time metadata from external API providers (Jikan, TMDB, Google Books, IGDB, Open Library).
-2. Adding media creates or resolves a shared catalog entry in MongoDB, downloading and caching covers to ImageKit for stable, CSP-friendly delivery.
-3. Import processor maps Excel rows to catalog entries, prioritizing local MongoDB cache and resolving missing metadata from external APIs using fuzzy matching (`fuzzyMatch.js`).
+1. **Gatekeeping**: Adding a new catalog item or friend connection checks the active subscription limits using `canAddItem` and `canAddFriend`. Exceeding these returns a `403 Forbidden` error with a `limitReached` flag.
+2. **Locking Mechanism**: If a user's subscription expires or is manually downgraded, their existing records exceeding the plan caps are not deleted. Instead, they are marked as `locked: true` based on an oldest-first order (sorted ascending by `createdAt`).
+3. **Restricted Access**: Locked items and friends are read-only in the UI. Progress updates, status changes, and social views (e.g. mutual friends list) are disabled for locked items/friends.
+4. **Validation**: Subscriptions are evaluated lazily on read/write actions using the `resolveSubscription` middleware to instantly handle natural expiries and trial expiration. A daily cron reconciliation sweep also runs to handle expiries and send 7-day warnings.
+
+### Admin Control & Config Pipeline
+
+1. **Auth Controls**: Routes under `/api/admin` are secured by combining JWT protection and the `requireAdmin` middleware.
+2. **Pricing & Limits Cache**: Subscription tier configs are cached in-memory at startup (`initializeTiersCache`) to avoid repetitive DB lookups.
+3. **Instant Sync**: When an admin updates a tier configuration (caps, pricing, feature flags) via `PUT /api/admin/tiers/:plan`, the cache is invalidated (`invalidateTiersCache`) so updates immediately take effect app-wide.
+4. **Manual Overrides**: Administrators can override any user's subscription tier, billing cycle (**Monthly**, **Quarterly**, **Half-Yearly**, **Yearly**, **Custom**), and expiry date with audit log tracking.
 
 ---
 
 ## 5. Folder Structure
 
 ```text
-Kokuyō/
-├── package.json             # Root scripts: install-all, dev, build, start
+Kokuyo Obsidian/
+├── package.json             # Root scripts: dev, build, start
+├── pnpm-workspace.yaml      # pnpm workspace configuration
+├── pnpm-lock.yaml           # pnpm lockfile
 ├── frontend/                # React Vite Frontend
 │   ├── public/              # Static public assets (manifest, sitemap, robots)
 │   ├── src/
-│   │   ├── components/      # Cards, Modals, Skeleton loaders, Navbar
+│   │   ├── api/             # Centralized Axios API setup and interceptors
+│   │   ├── components/      # Cards, Modals, Skeleton loaders, Navbar, ProtectedRoute, AdminRoute
 │   │   ├── constants/       # Media tabs & global constants
-│   │   ├── hooks/           # Custom React hooks (e.g., useMyCollectionExternalIds)
-│   │   ├── pages/           # Page routes (Auth, Friends, Landing, User collections)
-│   │   ├── store/           # Zustand stores (Auth, etc.)
-│   │   └── utils/           # Fuzzy search, addToCollection, device helpers
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── pages/           # Page routes
+│   │   │   ├── admin/       # Admin Dashboard, Catalog, Payments, Pricing, Platform configuration, System Logs viewer, Users list & details
+│   │   │   ├── auth/        # Login, Register, Forgot Password
+│   │   │   ├── common/      # Landing page, Pricing list, Contact form, Terms & Privacy (with admin edit mode)
+│   │   │   └── users/       # Profile/Security dashboard, Search catalog, Community Recommendations
+│   │   │       ├── collection/ # MyCollection layout wrapper & section components (Anime, Book, Game, etc.)
+│   │   │       └── friends/ # Friends List, Friend requests management, and Friend collections
+│   │   ├── store/           # Zustand stores (Auth, Toast, etc.)
+│   │   ├── utils/           # Fuzzy search, addToCollection, device helpers
+│   │   ├── App.jsx          # SPA entry layout & client route definitions
+│   │   ├── main.jsx         # React DOM entrypoint
+│   │   └── index.css        # Global CSS & Tailwind styling setup
 │   ├── index.html           # Main HTML template with SEO tags
 │   └── vite.config.js       # Vite build configuration
 ├── backend/                 # Express REST API Server
-│   ├── middleware/          # JWT Auth, rate limiting, error handlers
-│   ├── models/              # Mongoose schemas (User, Catalog, Friendship)
-│   ├── routes/              # Express route definition files
-│   ├── utils/               # Cron jobs, Excel imports, Gmail OAuth2, catalogs
+│   ├── config/              # Default configurations (Redis connection, Dodo Payments, Tiers layout)
+│   ├── constants/           # Core constants & seed defaults (legal policies, platforms, tier defaults)
+│   ├── controllers/         # Routing handlers for each entity
+│   ├── middleware/          # JWT Auth, rate limiting, subscription/admin checkers, error handlers
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # Express API route definition files
+│   ├── scripts/             # Database seeds and maintenance tasks
+│   ├── services/            # Async queues and processors (BullMQ, Puppeteer, email)
+│   ├── utils/               # Helper modules (cronLogger, sitemap generator, fuzzyMatch, tierCache)
 │   └── server.js            # Express application entrypoint
 └── README.md
 ```
@@ -109,218 +149,157 @@ Kokuyō/
 
 ## 6. Environment Variables
 
-### Backend Configuration
-
-Create a `.env` file in the `backend/` directory with the following variables:
+### Backend Configuration (`backend/.env`)
 
 ```env
 # Server Configuration
 PORT=5000
 NODE_ENV=production
+FRONTEND_URL=https://kokuyo.onrender.com
+BACKEND_URL=https://kokuyo.onrender.com
 
-# Database
-MONGO_URI=your_mongodb_uri
+# Database Configuration
+MONGO_URI=your_mongodb_cluster_uri
+LOG_MONGO_URI=your_log_mongodb_cluster_uri  # Optional separate log DB
 
-# Security & Sessions
-JWT_ACCESS_SECRET=your_jwt_access_secret
-JWT_REFRESH_SECRET=your_jwt_refresh_secret
+# Keep-Alive Configuration
+PING_TARGET_URL=https://kokuyo.onrender.com/api/health
 
-# Email (Gmail API + OAuth2)
-GMAIL_USER=your_email@gmail.com
-OAUTH_CLIENT_ID=your_google_client_id
-OAUTH_CLIENT_SECRET=your_google_client_secret
-OAUTH_REFRESH_TOKEN=your_gmail_oauth_refresh_token
+# Security & Sessions (JWT)
+JWT_ACCESS_SECRET=your_secure_jwt_access_secret
+JWT_REFRESH_SECRET=your_secure_jwt_refresh_secret
 
-# ImageKit (Media Uploads)
-IMAGEKIT_PUBLIC_KEY=your_public_key
-IMAGEKIT_PRIVATE_KEY=your_private_key
-IMAGEKIT_URL_ENDPOINT=your_url_endpoint
+# Official Email (Gmail API + OAuth2)
+GMAIL_USER=kokuyoobsidianofficial@gmail.com
+OAUTH_CLIENT_ID=your_google_oauth_client_id
+OAUTH_CLIENT_SECRET=your_google_oauth_client_secret
+OAUTH_REFRESH_TOKEN=your_google_oauth_refresh_token
 
-# Third-Party API Keys
+# ImageKit Configuration (Image Hosting)
+IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_imagekit_id
+
+# Third-Party Media APIs
 TMDB_API_KEY=your_tmdb_api_key
-GOOGLE_BOOKS_API_KEY=your_google_books_api_key
-IGDB_CLIENT_ID=your_twitch_client_id
-IGDB_CLIENT_SECRET=your_twitch_client_secret
+TMDB_BASE_URL=https://api.themoviedb.org/3
+TMDB_IMAGE_BASE=https://image.tmdb.org/t/p/w500
 
-# Fallback APIs (Optional)
+GOOGLE_BOOKS_API_KEY=your_google_books_api_key
+GOOGLE_BOOKS_BASE_URL=https://www.googleapis.com/books/v1
+
 OPEN_LIBRARY_BASE_URL=https://openlibrary.org
 OPEN_LIBRARY_COVERS_URL=https://covers.openlibrary.org
-```
 
-### Frontend Configuration
+JIKAN_BASE_URL=https://api.jikan.moe/v4
 
-Create a `.env` file in the `frontend/` directory with the following variables:
+IGDB_CLIENT_ID=your_twitch_igdb_client_id
+IGDB_CLIENT_SECRET=your_twitch_igdb_client_secret
 
-```env
-# API Endpoint URL
-VITE_API_URL=http://localhost:5000/api
+# Dodo Payments Gateway
+DODO_PAYMENTS_API_KEY=your_dodo_payments_api_key
+DODO_PAYMENTS_WEBHOOK_SECRET=your_dodo_payments_webhook_secret
+DODO_PAYMENTS_ENVIRONMENT=live_mode
+
+# Admin Credentials (GMAIL_USER is used as default admin email)
+ADMIN_PASSWORD=your_secure_admin_password
 ```
 
 ---
 
 ## 7. Installation & Setup
 
-### Prerequisites
+### Option A: Running with Docker (Recommended for Containerized Setup)
 
-- Node.js (v18+)
-- MongoDB (local instance or MongoDB Atlas)
-- ImageKit account
-- Third-party API keys (TMDB, Google Books, IGDB, Gmail OAuth2)
-
-### Step-by-Step Setup
+Ensure [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) are installed on your machine.
 
 1. **Clone the Repository**
-
    ```bash
-   git clone https://github.com/swagatgharat/Kokuyo.git
-   cd Kokuyo
+   git clone https://github.com/swagatgharat/Kokuyo_Obsidian.git
+   cd Kokuyo_Obsidian
    ```
 
-2. **Quick Start (Monorepo dev execution)**
+2. **Configure Environment Variables**
+   Create `backend/.env` as detailed in [Section 6](#6-environment-variables).
 
-   Run the root installer script to configure all dependencies, then run concurrently:
+3. **Start the Entire Stack (Backend + Frontend Nginx + Redis)**
    ```bash
-   npm run install-all
-   # Create backend/.env and frontend/.env as per Section 6
-   npm run dev
+   docker compose up --build -d
+   ```
+   - **Frontend Application**: `http://localhost:80`
+   - **Backend API**: `http://localhost:5000/api`
+   - **Health Check**: `http://localhost:5000/api/health`
+
+4. **Stop the Containers**
+   ```bash
+   docker compose down
    ```
 
-3. **Backend Setup**
+*(See [DOCKER_GUIDE.md](DOCKER_GUIDE.md) for advanced commands, single-service builds, and production container tips).*
 
+---
+
+### Option B: Native Local Setup
+
+#### Prerequisites
+- Node.js (v18+)
+- pnpm (v8+)
+- MongoDB Atlas cluster
+- ImageKit account
+- Google Cloud OAuth2 credentials (*Publishing status: In production*)
+
+#### Step-by-Step Setup
+1. **Clone the Repository**
    ```bash
-   cd backend
-   npm install
-   # Create .env and fill in variables
-   npm run dev
+   git clone https://github.com/swagatgharat/Kokuyo_Obsidian.git
+   cd Kokuyo_Obsidian
    ```
 
-4. **Frontend Setup**
-
+2. **Install Workspace Dependencies**
    ```bash
-   cd ../frontend
-   npm install
-   # Create .env and add VITE_API_URL
-   npm run dev
+   pnpm install
    ```
 
-5. **Production Build**
+3. **Configure Environment Files**
+   Create `backend/.env` as detailed in [Section 6](#6-environment-variables).
 
+4. **Development Launch**
    ```bash
-   npm run build    # Compiles frontend React app to backend-accessible static files
-   npm start        # Launches concurrent monolith production mode
+   pnpm dev      # Runs both backend and frontend concurrently with hot-reload
+   ```
+
+5. **Production Build & Launch**
+   ```bash
+   pnpm build    # Compiles React frontend SPA into dist
+   pnpm start    # Launches production backend API server
    ```
 
 ---
 
-## 8. Security Implementation
+## 8. Deployment Architecture (Render / Docker / Cloud VPS)
+
+- **Docker Container Deployment (Any Cloud / VPS)**:
+  - Backend Dockerfile: `backend/Dockerfile`
+  - Frontend Dockerfile: `frontend/Dockerfile` (served with production-tuned Nginx)
+  - Stack Orchestration: `docker-compose.yml`
+
+- **Unified Monolith Deployment on Render**:
+  - Root Build Command: `pnpm install && pnpm build`
+  - Root Start Command: `pnpm start`
+  - Environment: Set `NODE_ENV=production`, `FRONTEND_URL=https://your-domain.com`, `GMAIL_USER=kokuyoobsidianofficial@gmail.com`.
+
+- **Gmail OAuth2 in Production**:
+  - In Google Cloud Console, set your OAuth consent screen **Publishing Status to "In production"**.
+  - Refresh tokens generated in Production status remain permanent and do not expire after 7 days.
+
+---
+
+## 9. Security Implementation
 
 - **Authentication**: Short-lived JWT access tokens stored in application state; secure, `HttpOnly`, `SameSite=Lax` refresh cookies.
-- **Authorization**: Route-level access controlled via custom authentication middleware on the Express server.
-- **Session Management**: Session count cap (up to 5 concurrent sessions per account) with detailed browser, OS, and location tracking.
-- **OTP Protection**: Email-based OTP verify/request locks and validation attempt limits for password adjustments.
-- **Rate Throttling**: Granular rate limit groups applied to authentication routes, verification endpoints, and generic endpoints.
-- **Content Security Policy**: Custom Helmet configuration explicitly whitelisting trusted API sources and cover image CDNs.
-
----
-
-## 9. API Documentation
-
-### Authentication (`/api/auth`)
-
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Create a new user account | No |
-| `POST` | `/api/auth/login` | Authenticate credentials & initialize session cookie | No |
-| `POST` | `/api/auth/refresh` | Rotate and issue a fresh access token | No |
-| `POST` | `/api/auth/logout` | Terminate and invalidate current session | Yes |
-| `GET` | `/api/auth/me` | Fetch detailed profile data for active session | Yes |
-| `POST` | `/api/auth/forgot-password` | Generate & send password recovery OTP | No |
-| `POST` | `/api/auth/reset-password` | Validate OTP & update account password | No |
-| `POST` | `/api/auth/password/otp` | Request OTP verification for active password update | Yes |
-| `POST` | `/api/auth/password/reset` | Update password with existing credentials + active OTP | Yes |
-| `GET` | `/api/auth/sessions` | List metadata of all active user sessions | Yes |
-
-### Friends & Network (`/api/friends` & `/api/users`)
-
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| `PATCH` | `/api/users/profile` | Modify active profile display name | Yes |
-| `GET` | `/api/users/search` | Search for other users using their short ID | Yes |
-| `GET` | `/api/users/:userId/collections` | Fetch friend's library collection | Yes |
-| `GET` | `/api/friends` | Retrieve accepted friend list | Yes |
-| `GET` | `/api/friends/requests` | Fetch pending incoming request profiles | Yes |
-| `POST` | `/api/friends/request/:userId` | Send connection request to another user | Yes |
-| `PATCH` | `/api/friends/:requestId/accept` | Accept pending friend request | Yes |
-| `DELETE` | `/api/friends/:requestId` | Decline request or unfriend connection | Yes |
-
-### Media Management (`/api/{type}` where `{type}` is `anime`, `manga`, `movies`, `series`, `books`, `games`)
-
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/{type}/search` | Find matching items in local catalog and external APIs | Yes |
-| `POST` | `/api/{type}/add` | Add metadata entry to personal list | Yes |
-| `GET` | `/api/{type}/mylist` | Retrieve personal media collection entries | Yes |
-| `PATCH` | `/api/{type}/:id` | Update progress, status, score, or comments on entry | Yes |
-| `DELETE` | `/api/{type}/:id` | Remove media item from personal list | Yes |
-| `GET` | `/api/books/cover` | Proxy book cover CDN requests to avoid CSP redirects | Yes |
-
-### Import & Utilities (`/api/import` & others)
-
-| Method | Endpoint | Description | Auth Required |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/import/estimate` | Estimate processing time based on Excel sheet row counts | Yes |
-| `POST` | `/api/import/lookup` | Match and process a single imported row against catalog | Yes |
-| `GET` | `/api/health` | Backend system status healthcheck | No |
-| `POST` | `/api/imagekit/upload` | Direct cloud upload endpoint for custom media covers | Yes |
-
----
-
-## 10. Deployment Instructions
-
-### Production Monolith Mode
-
-Kokuyō supports a unified production environment where the Node/Express backend serves the pre-compiled frontend code static directory.
-
-1.  **Build Frontend Asset Target**:
-    ```bash
-    npm run build
-    ```
-    This script compiles the React SPA to the `frontend/dist` directory.
-2.  **Start Production Server**:
-    ```bash
-    npm start
-    ```
-    Launches the backend server to concurrently handle API requests and serve frontend SPA fallback routes.
-3.  **Host Execution Environment**:
-    Ensure the production environment has all standard environment variables listed in Section 6 configured.
-    *Gmail OAuth2 is recommended for Render deployments as outbound SMTP connections (such as ports 465/587) are restricted.*
-
-### Split Client/Server Deployment
-
-- **Backend REST API**: Deploy the `/backend` directory to a cloud runtime (e.g. Render, Railway) with backend environment variables.
-- **Frontend SPA Client**: Build the client (`npm run build` inside `/frontend`) and host the output `dist` folder on static hosts (e.g. Vercel, Netlify). Set the `VITE_API_URL` to point to the backend domain.
-
----
-
-## 11. Future Improvements
-
-- **External Account Sync**: Implement MAL / Goodreads OAuth endpoints to import metadata directly.
-- **Unified Global Search**: Single dashboard query field matching across all six collection categories.
-- **Remote Invalidation**: Disconnect specific concurrent browser sessions from the profile management panel.
-- **Real-Time Feed**: Socket-powered status activity stream showing friend collection additions.
-- **Analytics Visualization**: Interactive charts tracking consumption trends and scoring habits.
-
----
-
-## 12. Contributing Guidelines
-
-1.  **Fork** the repository.
-2.  Create a **Feature Branch** (`git checkout -b feature/AmazingFeature`).
-3.  **Commit** your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  **Push** to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a **Pull Request**.
-
-**Code Style**: Please follow standard Javascript ES6 patterns and camelCase naming conventions for files and variables.
+- **Automatic Session Invalidation**: Password updates immediately purge all other active refresh tokens from the database.
+- **OTP Fail Guard**: Database-backed attempt counters block OTP brute-forcing across rotating IPs.
+- **Granular Rate Throttling**: Protects login, registration, password resets, and support submissions against abuse.
 
 ---
 
